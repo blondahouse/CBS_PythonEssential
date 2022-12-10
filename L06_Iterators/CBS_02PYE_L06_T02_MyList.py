@@ -84,46 +84,58 @@ class MyList:
         if self._tail is None:
             self._head = self._tail = node
         else:
-            if index < 0:
-                index = self._length + index
-            if index > self._length:
-                index = self._length
-            el = self._head
-            if index == 0:
-                node.next = self._head
-                self._head = node
-                # node.prev = self._tail
+            if index >= self._length:
+                self.append(element)
             else:
-                for _ in range(index - 1):
-                    el = el.next
+                if index == 0:
+                    self._head.prev = node
+                    node.next = self._head
+                    self._head = node
+                else:
+                    index = index if index > 0 else self._length - (-index) % self._length
+                    el = self._head
+                    for _ in range(index - 1):
+                        el = el.next
 
-                node.prev = el.prev
-                node.next = el.next
-                el.next = node
-        self._length += 1
+                    node.prev = el
+                    node.next = el.next
+                    node.next.prev = node
+                    el.next = node
+                self._length += 1
+
+    def pop(self):
+        """Удаление элемента в конце списка"""
+
+        value_to_return = None
+        if self._tail is None:
+            self._head = self._tail = None
+        else:
+            value_to_return = self._tail.value
+            self._tail = self._tail.prev
+            self._tail.next = None
+            self._length -= 1
+        return value_to_return
 
     def remove(self, index):
 
         if self._tail is None:
             self._head = self._tail = None
         else:
-            if index < 0:
-                index = self._length + index
-            if index > self._length:
-                index = self._length
-            el = self._head
-            if index == 0:
-                node.next = el
-                self._head = node
-                node.prev = self._tail
+            if index >= self._length - 1:
+                self.pop()
             else:
-                for _ in range(index - 1):
-                    el = el.next
+                if index == 0:
+                    self._head = self._head.next
+                    self._head.prev = None
+                else:
+                    index = index if index > 0 else self._length - (-index) % self._length
+                    el = self._head
+                    for _ in range(index):
+                        el = el.next
 
-                node.prev = el.prev
-                node.next = el.next
-                el.next = node
-        self._length += 1
+                    el.prev.next = el.next
+                    el.next.prev = el.prev
+                self._length -= 1
 
     def __len__(self):
         return self._length
@@ -134,6 +146,9 @@ class MyList:
         # последовательности соединены изначальной строкой.
         # Функция map применяет заданную функцию ко всем элементам последовательности.
         return 'MyList([{}])'.format(', '.join(map(repr, self)))
+
+    def __str__(self):
+        return '[{}]'.format(', '.join(map(str, self)))
 
     def __getitem__(self, index):
         if not 0 <= index < len(self):
@@ -157,33 +172,47 @@ def main():
     print(len(my_list))
 
     # Вывод самого списка
-    print(my_list)
+    print(my_list, len(my_list))
 
     print()
 
     my_list.append(7)
-    print(my_list)
+    print(my_list, len(my_list))
 
     print()
 
     my_list.insert(150, 8)  # out of indexes [1, 2, 5, 7, 8]
-    print([1, 2, 5, 7, 8], my_list)
+    print([1, 2, 5, 7, 8], ' expected insert(150, 8)\n', my_list, ' len: ', len(my_list), sep='')
     my_list.insert(0, 0)  # first [0, 1, 2, 5, 7, 8]
-    print([0, 1, 2, 5, 7, 8], my_list)
+    print([0, 1, 2, 5, 7, 8], ' expected insert(0, 0)\n', my_list, ' len: ', len(my_list), sep='')
     my_list.insert(6, 9)  # last [0, 1, 2, 5, 7, 8, 9]
-    print([0, 1, 2, 5, 7, 8, 9], my_list)
+    print([0, 1, 2, 5, 7, 8, 9], ' expected insert(6, 9)\n', my_list, ' len: ', len(my_list), sep='')
     my_list.insert(3, 4)  # positive in the middle [0, 1, 2, 4, 5, 7, 8, 9]
-    print([0, 1, 2, 4, 5, 7, 8, 9], my_list)
+    print([0, 1, 2, 4, 5, 7, 8, 9], ' expected insert(3, 4)\n', my_list, ' len: ', len(my_list), sep='')
     my_list.insert(-3, 6)  # negative in the middle [0, 1, 2, 4, 5, 6, 7, 8, 9]
-    print([0, 1, 2, 4, 5, 6, 7, 8, 9], my_list)
+    print([0, 1, 2, 4, 5, 6, 7, 8, 9], ' expected insert(-3, 6)\n', my_list, ' len: ', len(my_list), sep='')
+    my_list.insert(-24, 3)  # negative in the middle [0, 1, 2, 4, 5, 6, 7, 8, 9]
+    print([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], ' expected insert(-24, 3)\n', my_list, ' len: ', len(my_list), sep='')
 
     print()
 
+    pop_value = my_list.pop()
+    print([0, 1, 2, 3, 4, 5, 6, 7, 8], ' expected pop()\n', my_list, ' pop value: ', pop_value, sep='')
+
     print()
 
-    # print(my_list.pop().__str__())
-    #
-    # print()
+    my_list.remove(150)  # out of indexes [1, 2, 5, 7, 8]
+    print([0, 1, 2, 3, 4, 5, 6, 7], ' expected remove(150)\n', my_list, ' len: ', len(my_list), sep='')
+    my_list.remove(0)  # first [0, 1, 2, 5, 7, 8]
+    print([1, 2, 3, 4, 5, 6, 7], ' expected remove(0)\n', my_list, ' len: ', len(my_list), sep='')
+    my_list.remove(3)  # last [0, 1, 2, 5, 7, 8, 9]
+    print([1, 2, 3, 4, 6, 7], ' expected remove(3)\n', my_list, ' len: ', len(my_list), sep='')
+    my_list.remove(-3)  # negative in the middle [0, 1, 2, 4, 5, 6, 7, 8, 9]
+    print([1, 2, 3, 6, 7], ' expected remove(-3)\n', my_list, ' len: ', len(my_list), sep='')
+    my_list.remove(-13)  # negative in the middle [0, 1, 2, 4, 5, 6, 7, 8, 9]
+    print([1, 2, 6, 7], ' expected remove(-13)\n', my_list, ' len: ', len(my_list), sep='')
+
+    print()
 
     my_list.clean()
     print('clean list ', my_list)
