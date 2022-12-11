@@ -1,0 +1,25 @@
+{
+    "items": {
+        "4857650475": {
+            "manufacturer": "apple",
+            "vendor code": "MLK03",
+            "model": "iphone 13 mini",
+            "color": "midnight",
+            "built-in memory": "128"
+        },
+        "3559660371": {
+            "manufacturer": "apple",
+            "vendor code": "MJQG3",
+            "model": "iphone 13 mini",
+            "color": "purple",
+            "built-in memory": "128"
+        },
+        "2523655384": {
+            "manufacturer": "apple",
+            "vendor code": "MPVN3",
+            "model": "iphone 14",
+            "color": "blue",
+            "built-in memory": "128"
+        }
+    }
+}
